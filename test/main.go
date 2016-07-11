@@ -24,5 +24,6 @@ func main() {
 	)
 
 	t := tui.Render(c)
+
 	fmt.Println(t)
 }

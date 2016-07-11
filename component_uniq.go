@@ -14,8 +14,16 @@ const (
 // RFC 4122 document.
 type UUID [16]byte
 
-// New generates a random UUID.
-func New() (u *UUID, err error) {
+func random() string {
+	o, err := randomUUID()
+	if err != nil {
+		panic(err)
+	}
+	return o.String()
+}
+
+// randomUUID generates a random UUID.
+func randomUUID() (u *UUID, err error) {
 	u = new(UUID)
 	// Set all bits to randomly (or pseudo-randomly) chosen values.
 	_, err = rand.Read(u[:])

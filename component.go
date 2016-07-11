@@ -2,10 +2,14 @@ package tui
 
 // IComponent is the terminal component interface
 type IComponent interface {
+	Ref() string
 	Render() interface{}
 	State() *Map
 	Props() *Map
 	SetState(*Change)
+	ComponentWillUpdate(*Map, *Map)
+	ComponentDidUpdate(*Map, *Map)
+	ShouldComponentUpdate(*Map, *Map) bool
 	Children(...interface{})
 }
 
@@ -26,6 +30,7 @@ func Extends(m ...*Map) *Component {
 		props.Set("children", make([]interface{}, 0))
 	}
 	return &Component{
+		id:    random(),
 		style: new(Style),
 		state: &Map{m: make(map[string]interface{})},
 		props: props,
@@ -66,6 +71,11 @@ func (v *Component) SetState(c *Change) {
 	go v.redraw()
 }
 
+// Ref to return component id
+func (v *Component) Ref() string {
+	return v.id
+}
+
 // (Re)-Draw to (re)draw user interface
 func (v *Component) redraw() {
 	v.Render()
@@ -79,6 +89,17 @@ func (v *Component) resize() {
 // Render ui handler
 func (v *Component) Render() interface{} {
 	return nil
+}
+
+// ComponentWillUpdate - Invoked immediately before rendering when new props or state are being received.
+func (v *Component) ComponentWillUpdate(nextProps *Map, nextState *Map) {}
+
+// ComponentDidUpdate - Invoked immediately after the component's updates are flushed to the terminal.
+func (v *Component) ComponentDidUpdate(prevProps *Map, prevState *Map) {}
+
+// ShouldComponentUpdate - Invoked before rendering when new props or state are being received
+func (v *Component) ShouldComponentUpdate(nextProps *Map, nextState *Map) bool {
+	return true
 }
 
 // Children to add component children
