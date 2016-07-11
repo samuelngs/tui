@@ -22,6 +22,9 @@ func build(i interface{}) []interface{} {
 	switch o := i.(type) {
 	case IComponent:
 		tmpl := o.Render()
+		if tmpl == nil {
+			return parent
+		}
 		temp := build(tmpl)
 		if l := len(temp); l > 1 {
 			parent = append(parent, temp)
@@ -31,6 +34,9 @@ func build(i interface{}) []interface{} {
 	case []interface{}:
 		sub := []interface{}{}
 		for _, v := range o {
+			if v == nil {
+				continue
+			}
 			temp := build(v)
 			if l := len(temp); l > 1 {
 				sub = append(sub, temp)

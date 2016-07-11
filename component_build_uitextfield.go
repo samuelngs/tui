@@ -1,19 +1,19 @@
 package tui
 
-// CoreView is the common content container
-type CoreView struct {
+// CoreTextField is the common content container
+type CoreTextField struct {
 	*Component
 }
 
-// UIView to create core container
-func UIView(o ...interface{}) *CoreView {
-	c := &CoreView{Extends()}
+// UITextField to create core container
+func UITextField(o ...interface{}) *CoreTextField {
+	c := &CoreTextField{Extends()}
 	c.Children(o...)
 	return c
 }
 
 // Render to render component content
-func (v *CoreView) Render() interface{} {
+func (v *CoreTextField) Render() interface{} {
 	if o, ok := v.props.Get("children"); ok {
 		if a, ok := o.([]interface{}); ok {
 			if l := len(a); l == 1 {

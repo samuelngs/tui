@@ -1,11 +1,14 @@
 package tui
 
+import "fmt"
+
 // IComponent is the terminal component interface
 type IComponent interface {
 	Ref() string
 	Render() interface{}
 	State() *Map
 	Props() *Map
+	Style() *Style
 	SetState(*Change)
 	ComponentWillUpdate(*Map, *Map)
 	ComponentDidUpdate(*Map, *Map)
@@ -141,10 +144,13 @@ func (v *Component) Children(i ...interface{}) {
 	v.props.Set("children", chrn)
 }
 
-// Style to add style to component
-func (v *Component) Style(i ...*Style) {
-	for _, o := range i {
-		v.style = o
-		break
-	}
+// Style to get style from component
+func (v *Component) Style() *Style {
+	return v.style
+}
+
+// String to return the string format of the component
+func (v *Component) String() string {
+	r := v.Render()
+	return fmt.Sprintf("%v", r)
 }
