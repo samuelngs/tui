@@ -1,9 +1,8 @@
 package tui
 
-import "fmt"
-
 // IComponent is the terminal component interface
 type IComponent interface {
+	// public
 	Ref() string
 	Render() interface{}
 	State() *Map
@@ -14,6 +13,11 @@ type IComponent interface {
 	ComponentDidUpdate(*Map, *Map)
 	ShouldComponentUpdate(*Map, *Map) bool
 	Children(...interface{})
+	// private
+	render() interface{}
+	redraw()
+	area() *Bound
+	childrens() interface{}
 }
 
 // Extends to extend custom component with core component
@@ -37,6 +41,7 @@ func Extends(m ...*Map) *Component {
 		style: new(Style),
 		state: &Map{m: make(map[string]interface{})},
 		props: props,
+		bound: new(Style).GetWindowSize(),
 	}
 }
 
@@ -52,6 +57,7 @@ type Component struct {
 	state *Map
 	props *Map
 	style *Style
+	bound *Bound
 }
 
 // State returns component state
@@ -77,16 +83,6 @@ func (v *Component) SetState(c *Change) {
 // Ref to return component id
 func (v *Component) Ref() string {
 	return v.id
-}
-
-// (Re)-Draw to (re)draw user interface
-func (v *Component) redraw() {
-	v.Render()
-}
-
-// Resize handler
-func (v *Component) resize() {
-	v.Render()
 }
 
 // Render ui handler
@@ -149,8 +145,37 @@ func (v *Component) Style() *Style {
 	return v.style
 }
 
-// String to return the string format of the component
-func (v *Component) String() string {
-	r := v.Render()
-	return fmt.Sprintf("%v", r)
+// (re)-draw to (re)draw user interface
+func (v *Component) redraw() {
+	v.Render()
+}
+
+// private render handler
+func (v *Component) render() interface{} {
+	return v.Render()
+}
+
+// resize handler
+func (v *Component) resize() {
+	v.Render()
+}
+
+// area returns the availabe bound size
+func (v *Component) area() *Bound {
+	return v.bound
+}
+
+// area returns the availabe bound size
+func (v *Component) childrens() interface{} {
+	var children interface{}
+	if o, ok := v.props.Get("children"); ok {
+		if a, ok := o.([]interface{}); ok {
+			if l := len(a); l == 1 {
+				children = a[0]
+			} else {
+				children = a
+			}
+		}
+	}
+	return children
 }

@@ -58,6 +58,11 @@ func (v *Terminal) Printf(f string, args ...interface{}) (int, error) {
 	return fmt.Fprintf(v.buf, f, args...)
 }
 
+// Write byte message to tty
+func (v *Terminal) Write(b []byte) (int, error) {
+	return v.buf.Write(b)
+}
+
 // Flush message
 func (v *Terminal) Flush() {
 	v.stdout.Write(v.buf.Bytes())
@@ -85,12 +90,12 @@ func (v *Terminal) Size() *Bound {
 }
 
 // Render to render component(s)
-func (v *Terminal) Render(i interface{}) {
+func (v *Terminal) Render(i IComponent) {
 	for {
 		tmpl := compile(i)
 		v.Clear()
-		v.Printf("%v\n", tmpl)
+		v.Write(tmpl)
 		v.Flush()
-		time.Sleep(2 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 }

@@ -14,13 +14,8 @@ func UIView(o ...interface{}) *CoreView {
 
 // Render to render component content
 func (v *CoreView) Render() interface{} {
-	if o, ok := v.props.Get("children"); ok {
-		if a, ok := o.([]interface{}); ok {
-			if l := len(a); l == 1 {
-				return a[0]
-			}
-		}
-		return o
-	}
-	return make([]interface{}, 0)
+	return uilayer(Attr{
+		Style: v.style,
+		Props: v.props,
+	}, v.childrens())
 }
